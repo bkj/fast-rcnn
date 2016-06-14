@@ -200,12 +200,14 @@ def im_detect(net, im, boxes):
         # Simply repeat the boxes, once for each class
         pred_boxes = np.tile(boxes, (1, scores.shape[1]))
 
+    feats = net.blobs['fc7'].data
     if cfg.DEDUP_BOXES > 0:
         # Map scores and predictions back to the original set of boxes
+        feats = feats[inv_index, :]
         scores = scores[inv_index, :]
         pred_boxes = pred_boxes[inv_index, :]
 
-    return scores, pred_boxes
+    return scores, pred_boxes, feats
 
 def vis_detections(im, class_name, dets, thresh=0.3):
     """Visual debugging of detections."""
